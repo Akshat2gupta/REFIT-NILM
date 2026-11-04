@@ -148,12 +148,14 @@ Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrup
 - **Total energy:** error is similar to the baseline (24% against 22%) and varies by home, from -55% to +57%.
 - **Single-home change:** detecting a change in one home is not yet validated, so this is a pilot goal.
 
-**Next, in order of expected value**
+**Next steps, in priority order**
 
-1. **Test on new homes** not used for model choice, because this gives an independent result.
-2. **Finish the feature-removal test,** to shrink the 86 features. One of six runs is complete.
-3. **Test ~8-second input further,** if meters can report at that rate. The look-ahead version has no shift control yet.
-4. **Run the CNN on all homes with tuning,** because one home cannot settle the comparison.
-5. **Test a per-home calibration,** which may fix level errors such as House 15's.
-6. **Model dishwashers and washing machines jointly,** since dishwashers remain the strongest false-alarm association.
-7. **Test the final model at 15 and 30 minutes,** and on low-temperature cycles.
+| Priority | Next step | Why it matters |
+|---:|---|---|
+| 1 | Validate on new homes | Gives an independent measure of real-world performance |
+| 2 | Simplify the feature set | A smaller model is easier to explain and maintain |
+| 3 | Evaluate higher-resolution input | ~8-second data showed a large gain, which could guide meter choices |
+| 4 | Benchmark a tuned CNN on all homes | Gives a full comparison, as the first test covered one home |
+| 5 | Add per-home calibration | May correct level errors, such as House 15's |
+| 6 | Model dishwashers and washers jointly, using each home's own routine | Targets the strongest source of false alarms |
+| 7 | Extend to 15- and 30-minute data and low-temperature cycles | Tests the settings most relevant to deployment |
