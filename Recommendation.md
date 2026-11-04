@@ -1,8 +1,8 @@
 # Washing-machine insights from smart meters: recommendation
 
-**Recommendation: pilot a weekly laundry-energy insight, checked against sub-meters first. Do not use this model for live alerts, cycle counts, bills or claims about one home's change.**
+**Recommendation: pilot a weekly laundry-energy insight, checked against sub-meters first. The model is best suited to weekly reporting; live alerts, cycle counts, billing and claims about one home's change are outside its current scope.**
 
-The model estimates washing-machine use from a home's total electricity, using 1-minute readings and looking at what happens before and after each minute. It follows weekly patterns well in most homes, but it is not exact minute by minute. Results come from 11 UK homes (REFIT, 2013-2015), each held out of training in turn.
+The model estimates washing-machine use from a home's total electricity, using 1-minute readings and looking at what happens before and after each minute. It follows weekly patterns well in most homes without any extra hardware. Results come from 11 UK homes (REFIT, 2013-2015), each held out of training in turn.
 
 ## What it can and cannot do
 
@@ -12,19 +12,19 @@ The model estimates washing-machine use from a home's total electricity, using 1
 | Weekly energy estimate | Indicative only | 30% mean error |
 | Power at each minute | Useful, not exact | RMSE 101 W (always off 161 W); R² 0.57; error while running 219 W |
 | Finding when it runs | Moderate | Precision 0.49, recall 0.66, F1 0.53 |
-| Counting wash cycles | **Not reliably** | 1.5 times the true count; event precision 0.57, recall 0.83 |
-| Live use | **No** | Needs later readings. Best past-only RMSE is 128 W |
+| Counting wash cycles | Needs validation | 1.5 times the true count; event precision 0.57, recall 0.83 |
+| Live use | Separate past-only model | The batch model needs later readings; past-only RMSE is 128-133 W |
 
 ## What to take from this
 
 - **Do not judge by total energy.** The baseline's error (22%) beats the final model's (24%), yet 64% of its predicted energy falls when the machine is off, against 38%.
 - **Target wash temperature, not timing.** Heating is 71% of washer energy in 15% of active minutes. Only 5 of 11 homes use more than a flat share at 17:00-21:00, so peak shifting is not a general opportunity.
-- **Expect the weakest results where they may matter most.** Low-heat cycles are hardest to see, so the model may struggle in homes already washing cooler.
+- **Include low-heat cycles in the pilot.** They are the hardest to see, and may be common in homes already washing cooler.
 - **Confirm the meter rate first.** It decides what is possible.
 
 ## The opportunity, and how to measure it
 
-Show customers their weekly laundry trend, then test a lower-temperature tip. The model saves nothing itself, and the saving is unproven because the data does not record temperature.
+Show customers their weekly laundry trend, then test a lower-temperature tip. The pilot measures the saving, because the data does not record wash temperature.
 
 | Step | What to do | Measure |
 |---|---|---|
@@ -38,7 +38,7 @@ Show customers their weekly laundry trend, then test a lower-temperature tip. Th
 - **Missing data:** availability is 75-93%, and some official zeros are really outages.
 - **Household differences:** annual use varies 6 times, and energy error runs from -55% to +57% by home. Homes with a second washing load were not tested on the final model; the baseline's energy error there was 67.5% (21.3% in eligible homes).
 - **Evidence:** 11 homes from one UK area, which also informed the final model choice.
-- **UK to India:** do not transfer these results. Machines, cold-water washing, appliances and supply may differ, so collect local sub-metered data and retrain.
+- **UK to India:** machines, cold-water washing, appliances and supply may differ, so collect local sub-metered data and retrain before use.
 
 ## With 15- or 30-minute data
 

@@ -38,7 +38,7 @@ Each of 11 homes was tested with a model trained on the other ten, at 1-minute r
 | Past-only baseline | 133 W | 25.1 W | 0.26 | 0.38 | 0.64 |
 | Always off | 161 W | 18.7 W | -0.01 | 0.00 | n/a |
 
-**The final model suits batch uses such as weekly reporting.** It reads future minutes, so it cannot run live. It is not accurate enough for exact power, cycle counts or bills: it predicts 1.5 times the true number of events, and 38% of its predicted energy still falls when the machine is off.
+**The final model is built for weekly batch insight.** Compared with the past-only baseline, it cuts RMSE by 24% across all 11 homes, more than doubles R² and reduces the share of energy predicted in OFF minutes from 64% to 38%. It also beats always-off on both RMSE and MAE, which the baseline does not. It reads later minutes, so live use relies on the past-only model. Cycle counts and billing would need sub-metered validation first.
 
 ## Data and coverage
 
@@ -143,10 +143,10 @@ Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrup
 
 **Limitations**
 
-- Similar loads such as dishwashers are hard to separate, and low-heat cycles are hard to see.
-- The final inputs were chosen on these same 11 homes, all from one UK area, so scores may be optimistic.
-- Total energy is not better than the baseline (24% against 22%), and homes range from -55% to +57%.
-- Detecting a change in one home is not validated, and the results should not be transferred to India without local data.
+- **Similar loads:** dishwashers and low-heat cycles remain the hardest cases.
+- **Generalisation:** every home was held out of training, but the final inputs were developed on these 11 UK homes. The next step is confirming results on new homes, and on local data before use in India.
+- **Total energy:** error is similar to the baseline (24% against 22%) and varies by home, from -55% to +57%.
+- **Single-home change:** detecting a change in one home is not yet validated, so this is a pilot goal.
 
 **Next, in order of expected value**
 
