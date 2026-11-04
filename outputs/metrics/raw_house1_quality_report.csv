@@ -1,0 +1,22 @@
+Check,Part 1,Part 2
+Total records,4377877,4140886
+Unparseable Time values,0,0
+Start (raw clock),2013-10-09 14:06:17,2014-06-27 21:57:50
+End (raw clock),2014-10-01 01:27:07,2015-07-10 11:56:32
+Backward time steps,1,0
+Duplicate Unix timestamps,1004404,14755
+Exact duplicate rows,595935,0
+Duplicate timestamps with different aggregate,79519,126
+"Missing values, all channels",0,5284083
+"Missing values, aggregate",0,188973
+Median sampling interval (s),7.0,7.0
+99th percentile interval (s),16.0,9.0
+Irregular intervals (over 30 s),1703,3901
+Gaps over 2 min,593,122
+Gaps over 1 h,14,19
+Negative readings,0,0
+Aggregate above 23000 W,26,51
+Aggregate equal to 0 W,12,0
+Appliance readings above 4000 W,3038,911
+Maximum aggregate (W),24000.0,29159.0
+Maximum appliance reading (W),98301.0,98301.0

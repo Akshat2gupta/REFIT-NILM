@@ -1,0 +1,7 @@
+Model,Resolution,Rows evaluated,ON %,MAE (W),RMSE (W),R2,MAE ON (W),F1,Mean abs energy error %,Median abs energy error %
+hist_gradient_boosting,1 minute,7226303,4.6,25.084,133.411,0.259,290.734,0.384,22.182,12.478
+hist_gradient_boosting,15 minutes,477266,5.404,28.054,119.082,0.034,267.129,0.34,27.577,26.894
+hist_gradient_boosting,30 minutes,234758,6.108,28.475,102.245,-0.074,236.44,0.348,34.857,27.274
+random_forest,1 minute,7226303,4.6,25.482,134.434,0.254,292.227,0.392,21.993,9.861
+random_forest,15 minutes,477266,5.404,28.149,117.824,0.063,261.892,0.357,28.644,27.251
+random_forest,30 minutes,234758,6.108,28.602,100.811,-0.025,232.019,0.357,36.099,28.132

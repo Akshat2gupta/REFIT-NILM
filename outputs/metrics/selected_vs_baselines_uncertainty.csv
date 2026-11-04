@@ -1,0 +1,9 @@
+Metric,Selected mean,95% interval,Compared with,Baseline mean,Difference,Difference 95% interval,Homes better,Wilcoxon p
+RMSE,133.966,110.582 to 156.751,Always off,161.3,-27.334,-39.374 to -15.422,10 of 11,0.0029
+MAE_ON,291.926,249.145 to 330.902,Always off,404.797,-112.871,-144.806 to -82.095,11 of 11,0.001
+MAE,25.168,18.08 to 32.44,Always off,18.725,6.443,3.767 to 8.56,1 of 11,0.0029
+F1,0.389,0.307 to 0.48,Threshold rule,0.298,0.091,0.046 to 0.132,10 of 11,0.0049
+Abs_energy_error_pct,21.346,9.643 to 36.099,Average home,70.471,-49.125,-91.611 to -9.379,8 of 11,0.0674
+Event_precision,0.235,0.167 to 0.324,Threshold rule,0.217,0.019,-0.003 to 0.041,8 of 11,0.123
+Event_recall,0.968,0.948 to 0.985,Threshold rule,0.966,0.002,-0.015 to 0.018,7 of 11,0.4648
+Event_precision_original,0.228,0.162 to 0.315,Threshold rule,0.207,0.021,0.001 to 0.042,8 of 11,0.0674

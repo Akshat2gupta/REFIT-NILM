@@ -1,0 +1,7 @@
+Model,Resolution,Homes,Weeks,Mean_r,Min_r,Max_r,Fixed_share_r,Weekly_abs_error,Fixed_share_abs_error,Homes_beating_fixed_share
+hist_gradient_boosting,1 minute,11,665,0.635,0.306,0.925,0.423,36.455,60.402,11
+hist_gradient_boosting,15 minutes,11,655,0.564,0.241,0.897,0.439,42.211,59.945,10
+hist_gradient_boosting,30 minutes,11,632,0.541,0.195,0.858,0.453,47.838,60.128,9
+random_forest,1 minute,11,665,0.607,0.287,0.929,0.423,36.519,60.402,11
+random_forest,15 minutes,11,655,0.585,0.275,0.895,0.439,43.108,59.945,10
+random_forest,30 minutes,11,632,0.545,0.196,0.87,0.453,49.639,60.128,9

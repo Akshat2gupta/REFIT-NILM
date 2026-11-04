@@ -1,0 +1,4 @@
+Method,MAE,RMSE,R2,MAE_ON,MAE_OFF,Precision,Recall,F1,Energy_error_pct,Energy_abs_error_pct,Off_energy_share_pct,Mean_pred_heating_W,Weekly_r,Weekly_abs_error_pct,Event_recall,Event_precision,Events_true,Events_pred
+Final model,16.6016,101.0585,0.5734,218.7225,6.7328,0.4908,0.6574,0.5314,-6.0722,23.6378,37.6983,1082.5398,0.7762,29.7516,0.8835,0.4182,396.0,954.0
+Past-only baseline,25.0836,133.4106,0.2591,290.7343,12.304,0.2927,0.65,0.3839,5.1468,22.1818,63.7411,611.7667,0.6348,36.4549,0.969,0.2246,396.0,2052.4545
+Always off,18.725,161.3005,-0.0128,404.7967,0.1931,0.0,0.0,0.0,-100.0,100.0,0.0,0.0,,100.0,0.0,,396.0,0.0

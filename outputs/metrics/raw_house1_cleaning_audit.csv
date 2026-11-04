@@ -1,0 +1,15 @@
+Step,Count
+Rows read (Part 1 + Part 2),8518763
+Dropped: unresolvable repeated clock hour,986
+Dropped: Part 2 rows inside the overlap with Part 1,945403
+Merged: rows sharing a timestamp,1016005
+Set missing: negative readings,0
+Set missing: aggregate exactly 0 W (a home always has some load),8
+Set missing: aggregate above 23000 W,59
+Set missing: appliance above 4000 W,3228
+Sensor readings held forward (2 min limit),2255728
+Set missing: frozen aggregate samples,7511
+Minutes in the study window,920031
+Minutes with no aggregate before gap filling,123201
+Minutes of aggregate interpolated,755
+Minutes of aggregate left empty (outage),122446

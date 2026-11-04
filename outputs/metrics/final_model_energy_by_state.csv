@@ -1,0 +1,5 @@
+Machine state,Measured kWh,Predicted kWh,Measured kWh (baseline),Predicted kWh (baseline)
+"Heating, 1000+ W",1688.6,976.1,1688.6,554.5
+200-1000 W,224.3,60.3,224.3,44.0
+"Tumbling, 20-200 W",371.3,414.0,371.3,268.6
+"OFF, 20 W or less",25.1,778.0,25.1,1423.1

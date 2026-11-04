@@ -1,0 +1,7 @@
+,All evaluated minutes,Minutes with no Issues flag
+MAE,25.168,21.788
+RMSE,133.966,119.688
+R2,0.254,0.023
+MAE_ON,291.926,280.225
+F1,0.389,0.367
+Abs_energy_error_pct,21.346,35.087

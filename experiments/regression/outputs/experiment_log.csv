@@ -1,0 +1,34 @@
+experiment,groups,model,requires_future,uses_8s_input,seconds,note,MAE,RMSE,R2,MAE_ON,MAE_OFF,MAE_heat,pred_heat,pred_medium,pred_tumble,off_energy_share,energy_signed,energy_abs,weekly_r,weekly_abs
+P0,,mse,False,False,225,Baseline features and settings on sampled rows: the harness control,25.1224,133.6042,0.2575,290.9919,12.3401,1357.54,610.0382,67.2792,54.9779,63.8659,5.0715,22.0935,0.632,36.4522
+E0_ridge,,ridge,False,False,64,Linear baseline on the same 34 features,32.8601,150.7819,0.0899,346.9946,17.9247,1682.0795,282.6378,61.1223,52.8314,79.2207,31.787,49.7776,0.5097,58.4273
+E1_L30,fut30,mse,True,False,1,,23.5388,127.2987,0.3126,275.5895,11.5089,1275.3937,699.2799,79.1333,57.3802,60.3215,4.3488,20.5936,0.6635,35.5154
+E1_L60,fut30+fut60,mse,True,False,1,,23.183,125.4431,0.3257,271.0257,11.328,1252.8052,723.7373,78.976,56.5348,59.7081,4.3418,19.8441,0.6633,34.9013
+E1_L120,fut30+fut60+fut120,mse,True,False,1,,23.2219,125.239,0.3298,271.9657,11.3499,1254.0574,722.2363,76.9277,55.9602,59.8732,4.0686,20.0351,0.6612,34.9235
+E1_L60_ctx,fut30+fut60+ctx,mse,True,False,1,,16.6016,101.0585,0.5734,218.7225,6.7328,905.9025,1082.5399,103.6466,86.7093,37.6983,-6.0722,23.6378,0.7762,29.7516
+E1_all,long+jitter+blocks+clock+history+fut30+fut60+fut120+ctx,mse,True,False,1,,16.4026,101.8389,0.5687,221.5331,6.4177,934.2655,1057.5981,115.2819,89.6508,36.0951,-7.2595,25.7173,0.7617,32.5387
+E2_long,long,mse,False,False,1,,25.1452,134.8993,0.239,295.1676,12.1704,1386.8515,579.3941,68.6935,54.1585,64.3806,2.5932,21.0324,0.6295,35.7223
+E2_jitter,jitter,mse,False,False,1,,22.444,128.0614,0.3263,276.1835,10.2279,1295.9643,673.4784,96.5757,75.8435,55.9399,-0.8574,26.5571,0.6945,34.8724
+E2_blocks,blocks,mse,False,False,1,,25.2294,134.3041,0.238,289.8933,12.4591,1356.5715,610.2297,70.549,55.5758,64.2186,5.8388,22.4149,0.6356,36.4522
+E2_clock,clock,mse,False,False,1,,25.0436,132.7822,0.2821,289.3675,12.3054,1338.0638,630.8623,71.1365,57.8983,62.9147,5.6626,22.1277,0.6171,38.235
+E2_history,history,mse,False,False,1,,25.7015,136.5908,0.224,297.0133,12.4809,1381.2368,584.5507,67.1198,54.6315,64.7903,8.109,29.1105,0.6075,39.8305
+E2_all,long+jitter+blocks+clock+history,mse,False,False,360,,22.4644,129.4679,0.3168,278.8417,10.006,1299.9555,668.8738,96.7254,75.954,55.6581,-1.706,25.5013,0.661,36.9152
+E2b_fine_past,fine,mse,False,True,254,,16.5076,106.8819,0.5289,232.9078,6.0254,970.9751,1011.6633,152.5932,115.3698,36.3623,-0.8346,28.8978,0.7038,34.8926
+E2b_fine_all_past,long+jitter+blocks+clock+history+fine,mse,False,True,397,,16.9611,109.653,0.5073,240.0623,6.0903,1005.9626,980.3414,144.1242,115.2226,36.9696,-0.6276,33.1578,0.6626,38.8767
+E2b_fine_look,long+jitter+blocks+clock+history+fut30+fut60+fut120+ctx+fine+futfine,mse,True,True,657,,13.3615,91.2084,0.6602,200.112,4.336,758.6063,1237.2989,157.4639,115.2752,25.3129,-2.8191,25.2105,0.7633,30.399
+C_ctx_shift7d,fut30+fut60+ctxshift,mse,True,False,415,Negative control for ctx: values moved 7 days within each home,23.4874,126.1181,0.3219,273.7174,11.5258,1265.7998,708.3516,77.5663,56.2605,60.4152,4.6541,20.5656,0.658,34.8676
+C_fine_shift7d,fineshift,mse,False,False,327,Negative control for fine: values moved 7 days within each home,25.4124,134.3103,0.2497,292.9676,12.5456,1366.6301,599.8953,66.2728,54.5453,64.5252,5.9923,23.6694,0.6307,37.231
+E3_past_poisson,jitter,poisson,False,False,620,poisson on the past track's features,inf,inf,-inf,inf,inf,inf,inf,inf,inf,66.9493,inf,inf,0.4737,inf
+E3_past_log,jitter,log,False,False,321,log on the past track's features,17.7887,157.267,0.0521,369.5973,0.7928,1848.8546,195.4442,35.0954,27.3177,30.2507,-82.7487,82.7487,0.5011,82.9424
+E3_past_hurdle,jitter,hurdle,False,False,567,hurdle on the past track's features,21.7943,128.3607,0.3215,279.4635,9.4023,1316.1837,649.3144,113.4541,86.7577,52.6684,-4.3571,27.2738,0.6899,35.172
+E3_past_mae,jitter,mae,False,False,768,mae on the past track's features,18.725,161.3005,-0.0128,404.7967,0.1931,1964.6501,0.0,0.0,0.0,0.0,-100.0,100.0,,100.0
+E3_past_states,jitter,states,False,False,1621,states on the past track's features,23.177,139.7616,0.173,271.7748,11.2136,1265.4361,701.9385,118.8372,82.6618,57.5598,9.6102,23.8941,0.6793,36.4641
+E3_look_poisson,fut30+fut60+ctx,poisson,True,False,533,poisson on the look track's features,inf,inf,-inf,inf,inf,inf,inf,inf,inf,56.4119,inf,inf,0.4387,inf
+E3_look_log,fut30+fut60+ctx,log,True,False,892,log on the look track's features,15.7039,137.2637,0.2505,324.9325,0.7235,1574.7624,551.2916,40.8356,38.5255,15.1498,-68.7623,68.7623,0.482,69.3983
+E3_look_hurdle,fut30+fut60+ctx,hurdle,True,False,698,hurdle on the look track's features,15.8664,101.5791,0.5637,216.2533,6.0094,918.1945,1055.3098,132.8317,96.3935,33.0798,-10.8838,25.4099,0.7465,30.8348
+E3_look_mae,fut30+fut60+ctx,mae,True,False,594,mae on the look track's features,18.725,161.3005,-0.0128,404.7967,0.1931,1964.6501,0.0,0.0,0.0,0.0,-100.0,100.0,,100.0
+E3_look_states,fut30+fut60+ctx,states,True,False,3291,states on the look track's features,16.8057,118.8223,0.375,211.0665,7.3116,877.5009,1101.393,141.2724,91.3878,40.6674,1.9335,21.3673,0.7164,29.1106
+E3_fine_poisson,fine,poisson,False,True,342,poisson on the fine track's features,inf,inf,-inf,inf,inf,inf,inf,inf,inf,36.5116,inf,inf,0.457,inf
+E3_fine_log,fine,log,False,True,352,log on the fine track's features,14.3732,130.2886,0.3213,298.5696,0.7465,1477.0693,574.6689,80.9672,60.9572,13.4652,-60.2754,60.2754,0.6208,61.6664
+E3_fine_hurdle,fine,hurdle,False,True,472,hurdle on the fine track's features,15.7829,106.1978,0.535,230.4665,5.3596,967.7111,1008.0319,169.8088,121.9616,32.8618,-3.335,27.6974,0.6935,33.3911
+E3_fine_mae,fine,mae,False,True,667,mae on the fine track's features,18.725,161.3005,-0.0128,404.7967,0.1931,1964.6501,0.0,0.0,0.0,0.0,-100.0,100.0,,100.0
+A_no_shape,fut30+fut60+ctx,mse,True,False,360,E1_L60_ctx without the shape family,16.7432,101.3277,0.5738,219.3037,6.8496,904.5739,1085.344,101.3147,86.3473,38.0721,-5.3658,23.3018,0.7691,29.6535

@@ -1,0 +1,3 @@
+Clock,Houses,Best alignment shift (min),Correlation at best shift,Correlation with no shift
+As published,11,-60,0.9653,0.8785
+Corrected to UK local time,11,0,0.9653,0.9653

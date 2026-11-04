@@ -1,0 +1,34 @@
+Experiment,Idea,Input,Needs future data,Homes,MAE,RMSE,R2,MAE_ON,off_energy_share,energy_abs,weekly_r,weekly_abs,Decision,Reason
+saved_hist_gradient_boosting,"Past-only baseline: 34 features, gradient boosting",1-minute,False,11,25.084,133.411,0.259,290.734,63.741,22.182,0.635,36.455,Baseline,Reference for everything else
+P0,Baseline features on sampled training rows,1-minute,False,11,25.122,133.604,0.257,290.992,63.866,22.094,0.632,36.452,Control,"Within about 1 W of the baseline in each home, so sampling is safe"
+E0_ridge,Linear model on the baseline features,1-minute,False,11,32.86,150.782,0.09,346.995,79.221,49.778,0.51,58.427,Rejected,Much worse than gradient boosting
+E0_hour_profile,Average power by hour of day,1-minute,False,11,35.25,160.54,-0.014,379.353,93.706,72.562,0.129,84.816,Rejected,Knows nothing about the home's own signal
+E1_L30,Add 30 minutes of future readings,1-minute,True,11,23.539,127.299,0.313,275.59,60.321,20.594,0.663,35.515,Rejected,"Real gain, but far behind cycle context"
+E1_L60,Add 60 minutes of future readings,1-minute,True,11,23.183,125.443,0.326,271.026,59.708,19.844,0.663,34.901,Rejected,"Real gain, but far behind cycle context"
+E1_L120,Add 120 minutes of future readings,1-minute,True,11,23.222,125.239,0.33,271.966,59.873,20.035,0.661,34.923,Rejected,Almost no gain over 60 minutes
+E1_L60_ctx,60 minutes of future readings plus cycle context,1-minute,True,11,16.602,101.058,0.573,218.723,37.698,23.638,0.776,29.752,Selected,Lowest 1-minute RMSE; passes the keep rule
+E1_all,"All 148 past, future and context features",1-minute,True,11,16.403,101.839,0.569,221.533,36.095,25.717,0.762,32.539,Rejected,No better than the smaller set
+C_ctx_shift7d,Control: cycle context moved 7 days,1-minute,True,11,23.487,126.118,0.322,273.717,60.415,20.566,0.658,34.868,Control,"Gain vanishes, so the gain is tied to the current minute"
+A_no_shape,Selected model without 5 block-shape features,1-minute,True,11,16.743,101.328,0.574,219.304,38.072,23.302,0.769,29.654,Not used,Almost no change; other features carry similar information
+E2_long,Past windows up to 3 hours,1-minute,False,11,25.145,134.899,0.239,295.168,64.381,21.032,0.63,35.722,Rejected,Worse than the control
+E2_jitter,Add small past power variations,1-minute,False,11,22.444,128.061,0.326,276.183,55.94,26.557,0.695,34.872,Live option,"Best past-only 1-minute set, but fails the keep rule on MAE when ON"
+E2_blocks,Add past heating-block features,1-minute,False,11,25.229,134.304,0.238,289.893,64.219,22.415,0.636,36.452,Rejected,No clear gain
+E2_clock,Add hour and day of week,1-minute,False,11,25.044,132.782,0.282,289.368,62.915,22.128,0.617,38.235,Rejected,No clear gain
+E2_history,Add the home's own long-term habits,1-minute,False,11,25.702,136.591,0.224,297.013,64.79,29.111,0.607,39.83,Rejected,Worse than the control
+E2_all,All past-only feature groups,1-minute,False,11,22.464,129.468,0.317,278.842,55.658,25.501,0.661,36.915,Rejected,No better than jitter alone
+E3_look_hurdle,"Selected features: ON/OFF, then power",1-minute,True,11,15.866,101.579,0.564,216.253,33.08,25.41,0.747,30.835,Rejected,Same RMSE within noise; fails the keep rule
+E3_look_states,Selected features: four power states,1-minute,True,11,16.806,118.822,0.375,211.067,40.667,21.367,0.716,29.111,Rejected,Much worse RMSE
+E3_look_log,Selected features: log target,1-minute,True,11,15.704,137.264,0.251,324.933,15.15,68.762,0.482,69.398,Rejected,Heating is badly under-predicted
+E3_look_mae,Selected features: absolute-error loss,1-minute,True,11,18.725,161.3,-0.013,404.797,0.0,100.0,,100.0,Rejected,Collapses to always off
+E3_look_poisson,Selected features: Poisson loss,1-minute,True,11,,,,,,,,,Failed run,"Predictions overflowed to infinity, so not a fair test"
+E3_past_hurdle,"Jitter features: ON/OFF, then power",1-minute,False,11,21.794,128.361,0.322,279.464,52.668,27.274,0.69,35.172,Rejected,No gain over jitter
+E3_past_states,Jitter features: four power states,1-minute,False,11,23.177,139.762,0.173,271.775,57.56,23.894,0.679,36.464,Rejected,Much worse RMSE
+E3_past_log,Jitter features: log target,1-minute,False,11,17.789,157.267,0.052,369.597,30.251,82.749,0.501,82.942,Rejected,Heating is badly under-predicted
+E3_past_mae,Jitter features: absolute-error loss,1-minute,False,11,18.725,161.3,-0.013,404.797,0.0,100.0,,100.0,Rejected,Collapses to always off
+E3_past_poisson,Jitter features: Poisson loss,1-minute,False,11,,,,,,,,,Failed run,"Predictions overflowed to infinity, so not a fair test"
+E2b_fine_past,Add within-minute statistics from ~8 s data,"8-second, outside the brief",False,11,16.508,106.882,0.529,232.908,36.362,28.898,0.704,34.893,Outside brief,"Large gain, reported as evidence for finer metering"
+E2b_fine_all_past,All past features plus ~8 s statistics,"8-second, outside the brief",False,11,16.961,109.653,0.507,240.062,36.97,33.158,0.663,38.877,Outside brief,No better than the ~8 s statistics alone
+E2b_fine_look,Look-ahead features plus ~8 s statistics,"8-second, outside the brief",True,11,13.362,91.208,0.66,200.112,25.313,25.21,0.763,30.399,Outside brief,Lowest RMSE overall; no separate shift control was run
+C_fine_shift7d,Control: ~8 s statistics moved 7 days,"8-second, outside the brief",False,11,25.412,134.31,0.25,292.968,64.525,23.669,0.631,37.231,Control,"Gain vanishes, so the gain is tied to the current minute"
+E5_look,"Small Seq2Point CNN, 60 minutes either side",1-minute,True,1,20.878,136.536,0.442,290.605,46.003,8.086,0.834,19.544,Rejected,Behind E1_L60_ctx on the one home tested (RMSE 117.89); full run not pursued
+E5_past,"Small Seq2Point CNN, past 121 minutes",1-minute,False,1,30.738,163.985,0.195,410.641,75.097,2.582,0.735,23.625,Rejected,No better than E2_jitter on the one home tested (RMSE 161.61); full run not pursued

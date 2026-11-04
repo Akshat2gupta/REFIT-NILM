@@ -1,0 +1,16 @@
+,All 11 homes,Without House 5 (washer-dryer)
+MAE,25.168,24.428
+RMSE,133.966,130.978
+R2,0.254,0.269
+MAE_ON,291.926,285.79
+MAE_OFF,12.372,12.142
+Precision,0.301,0.31
+Recall,0.648,0.657
+F1,0.389,0.398
+Energy_error_pct,5.284,7.522
+Abs_energy_error_pct,21.346,21.771
+Event_recall,0.968,0.969
+Event_precision,0.235,0.241
+Event_recall_original,0.854,0.851
+Event_precision_original,0.228,0.234
+Events_pred,1979.364,1797.1

@@ -1,0 +1,9 @@
+Compared with,Metric,Final model,Other,Mean difference,CI low,CI high,Homes better,Homes,Wilcoxon p
+Past-only baseline,RMSE,101.0585,133.4106,-32.3521,-39.56,-24.7703,11,11,0.001
+Past-only baseline,MAE,16.6016,25.0836,-8.4819,-10.6339,-6.4913,11,11,0.001
+Past-only baseline,MAE_ON,218.7225,290.7343,-72.0118,-97.5612,-47.9997,10,11,0.002
+Past-only baseline,R2,0.5734,0.2591,0.3143,0.2378,0.4027,11,11,0.001
+Always off,RMSE,101.0585,161.3005,-60.242,-77.283,-42.9386,11,11,0.001
+Always off,MAE,16.6016,18.725,-2.1234,-4.2275,-0.3386,8,11,0.0537
+Always off,MAE_ON,218.7225,404.7967,-186.0742,-242.0467,-131.2913,11,11,0.001
+Always off,R2,0.5734,-0.0128,0.5862,0.4723,0.6887,11,11,0.001

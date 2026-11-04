@@ -1,0 +1,21 @@
+house,wm_channel,wm_channels_all,wm_description,washer_dryer_channel,tumble_dryer_channel,eligible,exclusion_reason
+1,5.0,5,"Washing Machine, Beko, WMC6140",4,,False,also has a washer-dryer
+2,2.0,2,"Washing Machine, LG, F1289TD",,,True,
+3,6.0,6,"Washing Machine, Unknown, Unknown",,4,False,solar on aggregate
+4,,"4,5","Washing Machine(1), Servis, 6065; Washing Machine(2), Zanussi, Z917",,,False,two washing machines
+5,3.0,3,"Washing Machine, AEG, L99695HWD",,2,True,
+6,2.0,2,"Washing Machine, Bosch, Classixx 1200 Express",,,True,
+7,5.0,5,"Washing Machine, Bosch, Unknown",,4,True,
+8,4.0,4,Washing Machine,3,,False,also has a washer-dryer
+9,3.0,3,"Washing Machine, Bosch, Classixx 6 1200 Express",2,,False,also has a washer-dryer
+10,5.0,5,"Washing Machine, Beko, WI1382",,,True,
+11,3.0,3,"Washing Machine, Unknown, Unknown",,,False,solar on aggregate
+12,,,,,,False,no washing-machine channel
+13,3.0,3,"Washing Machine, Unknown, Unknown, (Changes 25 Mar 2015)",,,True,
+15,3.0,3,"Washing Machine, Beko, WMB91242LB",,2,True,
+16,5.0,5,"Washing Machine, Bosch, WAB24262GB/01",,,True,
+17,4.0,4,"Washing Machine, Bosch, Exxcel 8 Vario Perfect",,3,True,
+18,5.0,5,"Washing Machine, Unknown, Unknown",4,,False,also has a washer-dryer
+19,2.0,2,"Washing Machine, Bosch, WAE24060GB/03",,,True,
+20,4.0,4,"Washing Machine, Unknown, Unknown",,3,True,
+21,3.0,3,"Washing Machine, Beko, WMB81241LW",,2,False,solar on aggregate

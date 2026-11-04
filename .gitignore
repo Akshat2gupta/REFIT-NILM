@@ -1,0 +1,21 @@
+# Python and notebooks
+.venv/
+.venv-e5/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Data is downloaded by scripts/download_data.py and never committed
+data/
+
+# Large generated files. Metrics, figures and sample predictions are kept.
+outputs/models/
+outputs/predictions/*.parquet
+outputs/predictions/*.json
+*.tmp
+
+# Experiment files that are rebuilt by scripts, or are not part of the submission
+experiments/regression/cache/
+experiments/regression/outputs/predictions/
+experiments/cycle_detection/
+*_draft.md

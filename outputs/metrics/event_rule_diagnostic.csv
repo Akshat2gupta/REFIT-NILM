@@ -1,0 +1,5 @@
+Rule,Events_true,Events_pred,Predicted / true,Precision,Recall,Precision_original
+"As reported: calibrated threshold, peak above it",396.0,1979.364,4.998,0.235,0.968,0.228
+"Calibrated threshold, peak >= 200 W",396.0,1140.636,2.88,0.318,0.867,0.305
+"Calibrated threshold, peak >= 500 W",396.0,743.727,1.878,0.412,0.777,0.396
+"Threshold 200 W, peak >= 800 W",396.0,419.818,1.06,0.489,0.484,0.485

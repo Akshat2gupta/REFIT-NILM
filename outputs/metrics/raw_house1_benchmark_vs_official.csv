@@ -1,0 +1,4 @@
+Against official file,Aggregate r,Aggregate MAE (W),Washer r,Washer MAE (W)
+"Naive: all merged, no masking",0.9931,8.12,0.9346,0.818
+"Naive: Part 1 priority, no masking",0.9992,4.08,0.9396,0.544
+Pipeline,0.9992,3.0,0.9986,0.155

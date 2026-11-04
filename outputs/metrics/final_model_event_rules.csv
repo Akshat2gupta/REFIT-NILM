@@ -1,0 +1,4 @@
+Rule,Predicted / true,Event_precision,Event_recall
+Calibrated threshold only,2.409,0.418,0.883
+"Peak at least 200 W, the same as true events",1.5,0.568,0.833
+Peak at least 500 W (diagnostic),1.043,0.727,0.77

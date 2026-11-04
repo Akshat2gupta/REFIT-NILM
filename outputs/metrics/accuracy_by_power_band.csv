@@ -1,0 +1,5 @@
+band,minutes,true_kwh,pred_kwh,called_on_pct,true_energy_share_pct,pred_energy_share_pct
+1000+ W (heating),51093,1688.56,544.79,96.33,73.13,23.72
+20-200 W (tumbling),249462,370.85,276.52,58.04,16.06,12.04
+200-1000 W,37755,224.34,46.35,71.42,9.72,2.02
+OFF (20 W or less),6887993,25.13,1428.9,8.04,1.09,62.22
