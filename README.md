@@ -6,6 +6,17 @@ This project estimates a washing machine's power from a home's total electricity
 
 We built and evaluated two models. A **past-only model** uses only readings up to the current minute, so it can support live use. A **batch model** also reads later minutes, so it suits reporting after the data is collected. The batch model performed better (RMSE 101 W against 133 W, R² 0.57 against 0.26), so it is our final model. The past-only model remains in this repository with its code, metrics and figures, as the baseline and as the option for live use.
 
+```mermaid
+flowchart LR
+    A[Raw House 1 data] --> B[Cleaning<br/>DATA.md]
+    C[Official cleaned data<br/>11 homes] --> D[Washing-machine analysis<br/>Notebook 02]
+    C --> E[Past-only baseline<br/>RMSE 133 W]
+    C --> F[Batch model<br/>RMSE 101 W]
+    E --> G[Compare on held-out homes<br/>RESULTS.md]
+    F --> G
+    G --> H[Recommendation<br/>Weekly insight pilot]
+```
+
 | Document | Contents |
 |---|---|
 | [`DATA.md`](DATA.md) | Data coverage, quality findings and cleaning decisions |
