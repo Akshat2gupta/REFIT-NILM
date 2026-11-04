@@ -121,7 +121,7 @@ Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrup
 
 | Choice | Benefit | Cost |
 |---|---|---|
-| Read future minutes | RMSE improves from 133 W to 101 W | Cannot run live; the best past-only option reaches 128 W |
+| Read future minutes | RMSE improves from 133 W (past-only baseline) to 101 W | Cannot run live; the best past-only experiment, with jitter features, reaches 128 W |
 | Trees, not deep learning | Fast and easy to explain | A small CNN was tested on one home only, so a tuned one might do better |
 | 1-minute input | Matches the brief | ~8-second input scored better, and is reported only as evidence for finer metering |
 | No hyperparameter tuning | Reduces overfitting to test homes | Models may not be at their best |

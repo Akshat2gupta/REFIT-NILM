@@ -222,24 +222,24 @@ Mean predicted power in heating minutes rises from 612 W to 1,083 W, against abo
 
 **Better inputs mattered far more than other losses or a neural network.** Every experiment uses the same 11 homes and leave-one-house-out design. To be kept, a change had to improve both RMSE and MAE when ON in at least 8 of 11 homes, with a 95% interval that excludes zero, without increasing the share of energy in OFF minutes.
 
-| Experiment | Idea | RMSE (W) | MAE (W) | R² | Decision | Why |
-|---|---|---:|---:|---:|---|---|
-| **`E1_L60_ctx`** | Future 60 minutes + cycle context | **101.06** | 16.60 | **0.573** | **Selected** | Lowest 1-minute RMSE; passes the rule |
-| `E1_all` | All 148 features | 101.84 | 16.40 | 0.569 | Rejected | No better than the smaller set |
-| `E3_look_hurdle` | ON/OFF, then power | 101.58 | **15.87** | 0.564 | Rejected | Same RMSE within noise; fails the rule |
-| `E3_look_states` | Four power states | 118.82 | 16.81 | 0.375 | Rejected | Much worse RMSE |
-| `E1_L120` | Future 120 minutes | 125.24 | 23.22 | 0.330 | Rejected | Almost no gain over 60 minutes |
-| `E1_L60` | Future 60 minutes | 125.44 | 23.18 | 0.326 | Rejected | Far behind cycle context |
-| `E2_jitter` | Past-only small variations | 128.06 | 22.44 | 0.326 | **Live option** | Best past-only set, but fails the rule |
-| `E2_all` | All past-only groups | 129.47 | 22.46 | 0.317 | Rejected | No better than jitter alone |
-| `E2_clock` | Hour and day | 132.78 | 25.04 | 0.282 | Rejected | No clear gain |
-| `E2_long` | Past windows up to 3 hours | 134.90 | 25.15 | 0.239 | Rejected | Worse than the control |
-| `E3_look_log` | Log target | 137.26 | 15.70 | 0.251 | Rejected | Heating badly under-predicted |
-| `E0_ridge` | Linear model | 150.78 | 32.86 | 0.090 | Rejected | Much worse |
-| `E3_look_mae` | Absolute-error loss | 161.30 | 18.73 | -0.013 | Rejected | Collapses to always off |
-| `E3_look_poisson` | Poisson loss | n/a | n/a | n/a | Failed run | Predictions overflowed, so not a fair test |
+| Model | RMSE (W) | MAE (W) | R² | Decision | Why |
+|---|---:|---:|---:|---|---|
+| **Look-ahead with cycle context (final model)** | **101.06** | 16.60 | **0.573** | **Selected** | Lowest 1-minute RMSE; passes the rule |
+| All 148 past, future and context features | 101.84 | 16.40 | 0.569 | Rejected | No better than the smaller set |
+| Final features, ON/OFF then power | 101.58 | **15.87** | 0.564 | Rejected | Same RMSE within noise; fails the rule |
+| Final features, four power states | 118.82 | 16.81 | 0.375 | Rejected | Much worse RMSE |
+| 120-minute look-ahead | 125.24 | 23.22 | 0.330 | Rejected | Almost no gain over 60 minutes |
+| 60-minute look-ahead | 125.44 | 23.18 | 0.326 | Rejected | Far behind cycle context |
+| Past-only with jitter features | 128.06 | 22.44 | 0.326 | **Live option** | Best past-only set, but fails the rule |
+| Past-only with all extra features | 129.47 | 22.46 | 0.317 | Rejected | No better than jitter alone |
+| Past-only with hour and day | 132.78 | 25.04 | 0.282 | Rejected | No clear gain |
+| Past-only with 3-hour windows | 134.90 | 25.15 | 0.239 | Rejected | Worse than the control |
+| Final features, log target | 137.26 | 15.70 | 0.251 | Rejected | Heating badly under-predicted |
+| Linear model (Ridge) | 150.78 | 32.86 | 0.090 | Rejected | Much worse |
+| Final features, absolute-error loss | 161.30 | 18.73 | -0.013 | Rejected | Collapses to always off |
+| Final features, Poisson loss | n/a | n/a | n/a | Failed run | Predictions overflowed, so not a fair test |
 
-**A small Seq2Point CNN was tested on one home only.** On House 16, it reached RMSE 136.54 W using 60 minutes either side, against 117.89 W for the final model, and 163.99 W using the past only, against 161.61 W for `E2_jitter`. It took about 30 minutes per fold and looked unlikely to change the decision, so the full run was not pursued. One untuned fold cannot show that a CNN is worse in general.
+**A small Seq2Point CNN was tested on one home only.** On House 16, it reached RMSE 136.54 W using 60 minutes either side, against 117.89 W for the final model, and 163.99 W using the past only, against 161.61 W for the past-only model with jitter features. It took about 30 minutes per fold and looked unlikely to change the decision, so the full run was not pursued. One untuned fold cannot show that a CNN is worse in general.
 
 **Not finished:** removing the five block-shape features barely changed the result (RMSE 101.33 W). The other parts of this feature-removal test were not completed, so we cannot say which features matter most or how far the 86 could shrink.
 
@@ -252,11 +252,11 @@ Mean predicted power in heating minutes rises from 612 W to 1,083 W, against abo
 | Model | Input | Future data? | RMSE (W) | MAE (W) | R² | Weekly r |
 |---|---|---|---:|---:|---:|---:|
 | Final model | 1-minute | Yes | 101.06 | 16.60 | 0.573 | 0.776 |
-| `E2_jitter` | 1-minute | No | 128.06 | 22.44 | 0.326 | 0.695 |
-| `E2b_fine_past` | ~8-second | No | 106.88 | 16.51 | 0.529 | 0.704 |
-| `E2b_fine_look` | ~8-second | Yes | 91.21 | 13.36 | 0.660 | 0.763 |
+| Past-only with jitter features | 1-minute | No | 128.06 | 22.44 | 0.326 | 0.695 |
+| Past-only with within-minute statistics | ~8-second | No | 106.88 | 16.51 | 0.529 | 0.704 |
+| Look-ahead with within-minute statistics | ~8-second | Yes | 91.21 | 13.36 | 0.660 | 0.763 |
 
-The past-only gain disappears when these statistics are moved by 7 days (RMSE 134.31 W). No separate check of this kind was run on `E2b_fine_look`.
+The past-only gain disappears when these statistics are moved by 7 days (RMSE 134.31 W). No separate check of this kind was run on the look-ahead version.
 
 ### Coarser meter data
 
