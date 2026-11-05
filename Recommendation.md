@@ -36,8 +36,8 @@ Show customers their weekly laundry trend, then test a lower-temperature tip. Th
 
 - **Overlapping signatures:** similar loads cannot be fully separated. Dishwashers are the strongest false-alarm association.
 - **Missing data:** availability is 75-93%, and some official zeros are really outages.
-- **Household differences:** annual use varies 6 times, and energy error runs from -55% to +57% by home. Homes with a second washing load were not tested on the final model; the baseline's energy error there was 67.5% (21.3% in eligible homes).
-- **Evidence:** 11 homes from one UK area.
+- **Household differences:** annual use varies 6 times, and energy error runs from -55% to +57% by home. Homes with a second washing load show more false alarms: precision 0.31 and 30% energy error (baseline 67%).
+- **Evidence:** model development used 11 homes from one UK area, each held out in testing. On 4 other homes, not used to choose the model, RMSE was 102.5 W (baseline 134.5 W). New homes are the next test.
 - **UK to India:** machines, cold-water washing, appliances and supply may differ, so collect local sub-metered data and retrain before use.
 
 ## With 15- or 30-minute data

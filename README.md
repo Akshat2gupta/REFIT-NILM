@@ -60,7 +60,8 @@ REFIT-NILM/
 │   ├── download_data.py      Downloads and extracts REFIT
 │   ├── run_experiments.py    Trains the baselines and past-only models
 │   ├── run_final_model.py    Trains the final model
-│   └── evaluate_final_model.py  Final metrics and figures
+│   ├── evaluate_final_model.py  Final metrics and figures
+│   └── evaluate_excluded_homes.py  Stress test on washer-dryer homes
 ├── notebooks/                01 raw data, 02 washing-machine analysis, 03 baseline modelling
 ├── outputs/                  Figures and metric tables
 ├── experiments/regression/   Optional: experiments behind the final model
@@ -80,6 +81,7 @@ python scripts/download_data.py        # Download and extract the data
 python scripts/run_experiments.py      # Baselines and past-only models: a few hours
 python scripts/run_final_model.py      # Final model: about 15-30 minutes
 python scripts/evaluate_final_model.py # Final metrics and figures
+python scripts/evaluate_excluded_homes.py # Stress test on washer-dryer homes
 ```
 
 Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrupted. Results are written to `outputs/metrics/` and `outputs/figures/`.
@@ -93,6 +95,7 @@ Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrup
 | Baselines | `scripts/run_experiments.py`, notebook 03 | `src/modeling.py` | `03_*` figures, `loho_*` metrics |
 | Final model | `scripts/run_final_model.py` | `src/lookahead.py` | `loho__lookahead_ctx__*` predictions |
 | Final evaluation | `scripts/evaluate_final_model.py` | `src/evaluation.py` | `04_*` figures, `final_model_*` metrics |
+| Stress test | `scripts/evaluate_excluded_homes.py` | `src/lookahead.py` | `final_model_excluded_homes.csv` |
 
 ## Methodology
 
@@ -143,7 +146,7 @@ Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrup
 **Limitations**
 
 - **Similar loads:** dishwashers and low-heat cycles remain the hardest cases.
-- **Generalisation:** every home was held out of training. The next step is confirming results on new homes, and on local data before use in India.
+- **Generalisation:** model development used these 11 UK homes, with each home held out in testing. On 4 washer-dryer homes not used to choose the final model, RMSE was 102.5 W and R² 0.58, against 134.5 W and 0.28 for the baseline. The next step is validating on new homes, and on local data before use in India.
 - **Total energy:** error is similar to the baseline (24% against 22%) and varies by home, from -55% to +57%.
 - **Single-home change:** detecting a change in one home is not yet validated, so this is a pilot goal.
 
