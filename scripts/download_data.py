@@ -37,7 +37,9 @@ def download(url: str, dest: Path, expected_size: int | None = None) -> None:
     dest.parent.mkdir(parents=True, exist_ok=True)
     print(f"[get ] {url}")
     tmp = dest.with_suffix(dest.suffix + ".part")
-    with urllib.request.urlopen(url) as response, open(tmp, "wb") as out:
+    # The repository rejects Python's default client name, so send a plain one.
+    request = urllib.request.Request(url, headers={"User-Agent": "REFIT-NILM-download/1.0"})
+    with urllib.request.urlopen(request) as response, open(tmp, "wb") as out:
         shutil.copyfileobj(response, out, length=1024 * 1024)
     if expected_size is not None and tmp.stat().st_size != expected_size:
         raise RuntimeError(f"{dest.name}: got {tmp.stat().st_size} bytes, expected {expected_size}")

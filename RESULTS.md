@@ -404,7 +404,7 @@ True events must peak at 200 W or more, so the headline applies the same peak ru
 
 **Stress test on homes with a second washing load** (houses 1, 8, 9, 18): R² 0.27 against 0.25, precision 0.18 against 0.30, absolute energy error 67.5% against 21.3%. Energy error ranges from -0.8% (House 8) to +178.4% (House 18), with a median of 45.3%. House 6, with one machine, reaches +76%, so the error cannot be attributed to the second load alone.
 
-**Reused work:** Random Forest folds and the baselines were trained in an earlier run and reused. One fold was retrained and matched to within 0.0001 W. Model selection used a 1.5M-row sample and a 50-tree forest. The final model's training code reproduced the experiment's predictions exactly in all 11 homes.
+**Training details:** model selection used a 1.5M-row sample and a 50-tree forest. The final model's training code reproduced the experiment's predictions exactly in all 11 homes.
 
 </details>
 

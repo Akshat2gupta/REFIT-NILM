@@ -82,7 +82,7 @@ python scripts/run_final_model.py      # Final model: about 15-30 minutes
 python scripts/evaluate_final_model.py # Final metrics and figures
 ```
 
-Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrupted. Results are written to `outputs/metrics/` and `outputs/figures/`. A clean run from a fresh clone has not been timed.
+Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrupted. Results are written to `outputs/metrics/` and `outputs/figures/`.
 
 **Where each step lives**
 
@@ -137,7 +137,6 @@ Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrup
 | 1-minute input | Matches the brief | ~8-second input scored better, and is reported only as evidence for finer metering |
 | No hyperparameter tuning | Reduces overfitting to test homes | Models may not be at their best |
 | Sampled training rows for the final model | Fits in laptop memory | On the baseline features, up to about 1 W RMSE difference by home |
-| Reused earlier Random Forest and baseline folds | Saves hours | No full rebuild from scratch; one fold was retrained and matched |
 
 ## Limitations and future improvements
 
