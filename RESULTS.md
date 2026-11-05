@@ -252,30 +252,9 @@ Mean predicted power in heating minutes rises from 612 W to 1,083 W, against abo
 
 **The full table of 33 runs is in `outputs/metrics/experiments_summary.csv`,** and `experiments/README.md` explains how to run them.
 
-### Stress test on homes outside model development
+### Stress test on four more homes
 
-**The final model keeps its RMSE and R² on four more homes, and beats the baseline in each.** Model development used the 11 eligible homes, with each home held out in testing, so those scores may be somewhat optimistic. As a further check, we applied the final model to washer-dryer Houses 1, 8, 9 and 18, which were not used to choose it. Models trained on the 11 homes, and thresholds came from their leave-one-house-out runs.
-
-| Mean of 4 homes | Final model | Past-only baseline | Final model, 11 homes |
-|---|---:|---:|---:|
-| RMSE (W) | **102.52** | 134.50 | 101.06 |
-| MAE (W) | **15.80** | 26.03 | 16.60 |
-| R² | **0.578** | 0.277 | 0.573 |
-| MAE when ON (W) | **315.85** | 422.21 | 218.72 |
-| Precision | **0.31** | 0.14 | 0.49 |
-| Recall | 0.85 | 0.93 | 0.66 |
-| F1 | **0.455** | 0.235 | 0.531 |
-| Energy absolute error | **30.2%** | 67.1% | 23.6% |
-| Weekly r | **0.81** | 0.71 | 0.78 |
-
-| House | RMSE, final (W) | RMSE, baseline (W) | R², final | Signed energy error, final | Weekly r, final |
-|---|---:|---:|---:|---:|---:|
-| 1 | 100.49 | 118.44 | 0.43 | +3.9% | 0.72 |
-| 8 | 155.45 | 203.67 | 0.59 | -14.1% | 0.84 |
-| 9 | 102.40 | 142.05 | 0.62 | +22.8% | 0.89 |
-| 18 | 51.72 | 73.83 | 0.67 | +79.9% | 0.80 |
-
-**This is a stress test, not an independent test.** The sample is small, the baseline had already been tested on these homes, and their washing-machine label leaves out the second washing load. That load probably explains some of the lower precision and the 52% of predicted energy in OFF minutes. The full table is in `outputs/metrics/final_model_excluded_homes.csv`.
+**On 4 washer-dryer homes not used to choose the final model, RMSE was 102.5 W and R² 0.58, against 134.5 W and 0.28 for the baseline.** Precision fell to 0.31, so false alarms are higher in these homes. It is a stress test, not an independent test. Details are under [Full details](#full-details).
 
 ### Beyond the brief: 8-second input
 
@@ -364,6 +343,34 @@ This shows co-occurrence, not proof of cause, in two homes first chosen for the 
 The cycle-context and within-minute features are our own design, drawn from examining this data.
 
 ## Full details
+
+<details>
+<summary><strong>Stress test on four more homes</strong></summary>
+
+**The final model keeps its RMSE and R² on four more homes, and beats the baseline in each.** Model development used the 11 eligible homes, with each home held out in testing, so those scores may be somewhat optimistic. As a further check, we applied the final model to washer-dryer Houses 1, 8, 9 and 18, which were not used to choose it. Models trained on the 11 homes, and thresholds came from their leave-one-house-out runs.
+
+| Mean of 4 homes | Final model | Past-only baseline | Final model, 11 homes |
+|---|---:|---:|---:|
+| RMSE (W) | **102.52** | 134.50 | 101.06 |
+| MAE (W) | **15.80** | 26.03 | 16.60 |
+| R² | **0.578** | 0.277 | 0.573 |
+| MAE when ON (W) | **315.85** | 422.21 | 218.72 |
+| Precision | **0.31** | 0.14 | 0.49 |
+| Recall | 0.85 | 0.93 | 0.66 |
+| F1 | **0.455** | 0.235 | 0.531 |
+| Energy absolute error | **30.2%** | 67.1% | 23.6% |
+| Weekly r | **0.81** | 0.71 | 0.78 |
+
+| House | RMSE, final (W) | RMSE, baseline (W) | R², final | Signed energy error, final | Weekly r, final |
+|---|---:|---:|---:|---:|---:|
+| 1 | 100.49 | 118.44 | 0.43 | +3.9% | 0.72 |
+| 8 | 155.45 | 203.67 | 0.59 | -14.1% | 0.84 |
+| 9 | 102.40 | 142.05 | 0.62 | +22.8% | 0.89 |
+| 18 | 51.72 | 73.83 | 0.67 | +79.9% | 0.80 |
+
+**This is a stress test, not an independent test.** The sample is small, the baseline had already been tested on these homes, and their washing-machine label leaves out the second washing load. That load probably explains some of the lower precision and the 52% of predicted energy in OFF minutes. The full table is in `outputs/metrics/final_model_excluded_homes.csv`.
+
+</details>
 
 <details>
 <summary><strong>Past-only baseline: results for each home</strong></summary>
