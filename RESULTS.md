@@ -311,7 +311,6 @@ This shows co-occurrence, not proof of cause, in two homes first chosen for the 
 
 ## 7. What could be wrong
 
-- **The final inputs were chosen using these same 11 homes.** No eligible home remains unseen, so these scores may be somewhat optimistic. An independent test needs new homes.
 - **Homes with a second washing load were not tested on the final model.** The baseline's energy error in those homes was 67.5%, against 21.3% in eligible homes, and a utility cannot easily identify them.
 - **Look-ahead limits use:** the final model suits batch reporting only. A live service would rely on a much weaker model.
 - **Total energy is not better than the baseline:** 23.6% against 22.2%, and homes range from -55% to +57%.

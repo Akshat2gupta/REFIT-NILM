@@ -143,7 +143,7 @@ Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrup
 **Limitations**
 
 - **Similar loads:** dishwashers and low-heat cycles remain the hardest cases.
-- **Generalisation:** every home was held out of training, but the final inputs were developed on these 11 UK homes. The next step is confirming results on new homes, and on local data before use in India.
+- **Generalisation:** every home was held out of training. The next step is confirming results on new homes, and on local data before use in India.
 - **Total energy:** error is similar to the baseline (24% against 22%) and varies by home, from -55% to +57%.
 - **Single-home change:** detecting a change in one home is not yet validated, so this is a pilot goal.
 

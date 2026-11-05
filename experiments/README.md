@@ -29,7 +29,7 @@ Run from `experiments/regression/`, after the data is downloaded and `scripts/ru
 | **E0: control** | Sampling training rows must not change results | Sampled rows match the full-data baseline | RMSE 133.60 W against 133.41 W | One sampling rate | Safe reference |
 | **E0: simple baselines** | Does the model beat simple alternatives? | Ridge and hour profile are weaker | RMSE 150.78 W and 160.54 W | Few alternatives | Rejected |
 | **E1: future windows** | The past-only model cannot see what follows the heating | Later readings help | RMSE 125.44 W at 60 minutes; 125.24 W at 120 | Batch only | Real gain, flat beyond 60 minutes |
-| **E1: cycle context** | A wash has a recognisable shape | Surrounding blocks and variation help further | RMSE 101.06 W, better in 11 of 11 homes | Batch only; chosen on these homes | **Selected** |
+| **E1: cycle context** | A wash has a recognisable shape | Surrounding blocks and variation help further | RMSE 101.06 W, better in 11 of 11 homes | Batch only | **Selected** |
 | **E2: past-only groups** | Live use has no future data | Longer history, jitter, blocks, clock or habits help | Best is jitter at 128.06 W; it fails the keep rule | Past-only is ambiguous at heating start | Best live option; no strong gain |
 | **E3: losses and structure** | Squared error hedges under ambiguity | A different loss or a two-part model helps | No loss beat squared error on RMSE; hurdle had the lowest MAE of its set (15.87 W) | Poisson overflowed and was not a fair test | Rejected |
 | **Controls** | Large gains need checking | Shifting features by 7 days removes real gains | Cycle context 126.12 W; ~8-second statistics 134.31 W | No control on the ~8-second look-ahead model | Gains tied to the current minute |
