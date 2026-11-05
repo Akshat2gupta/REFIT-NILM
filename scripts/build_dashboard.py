@@ -1,0 +1,156 @@
+"""Build the static project dashboard in ``docs/`` from the saved metric tables.
+
+The page has no server or external dependency, so GitHub Pages can host it directly.
+Usage: ``python scripts/build_dashboard.py``
+"""
+from __future__ import annotations
+
+import json
+import shutil
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+import pandas as pd  # noqa: E402
+
+from src import config as cfg  # noqa: E402
+
+DOCS = ROOT / "docs"
+REPO = "https://github.com/Akshat2gupta/REFIT-NILM"
+FIGURES = ("04_A_actual_vs_predicted_final_model.png", "01_aggregate_before_after.png")
+EXPERIMENTS = [
+    ("E1_L60_ctx", "Look-ahead with cycle context", "selected", "Selected: lowest 1-minute RMSE"),
+    ("E3_look_hurdle", "Final features, ON/OFF then power", "rejected", "Same RMSE within noise"),
+    ("E1_all", "All 148 features", "rejected", "No better than the smaller set"),
+    ("E3_look_states", "Final features, four power states", "rejected", "Much worse RMSE"),
+    ("E1_L120", "120-minute look-ahead", "rejected", "Almost no gain over 60 minutes"),
+    ("E1_L60", "60-minute look-ahead", "rejected", "Far behind cycle context"),
+    ("E2_jitter", "Past-only with jitter features", "live", "Best past-only set; fails the keep rule"),
+    ("E2_clock", "Past-only with hour and day", "rejected", "No clear gain"),
+    ("saved_hist_gradient_boosting", "Past-only baseline", "baseline", "Reference for all experiments"),
+    ("E2_long", "Past-only with 3-hour windows", "rejected", "Worse than the control"),
+    ("E3_look_log", "Final features, log target", "rejected", "Heating badly under-predicted"),
+    ("E0_ridge", "Linear model (Ridge)", "rejected", "Much worse"),
+    ("E3_look_mae", "Final features, absolute-error loss", "rejected", "Collapses to always off"),
+]
+
+
+def payload() -> dict:
+    metric = lambda name: pd.read_csv(cfg.METRICS / f"{name}.csv")
+    summary = metric("final_model_summary").set_index("Method")
+    final = metric("final_model_by_house").set_index("house")
+    base = metric("loho_by_house_hist_gradient_boosting").set_index("house")
+    state = metric("final_model_energy_by_state")
+    excluded = metric("final_model_excluded_homes")
+    experiments = metric("experiments_summary").set_index("Experiment")
+    show = lambda name, method: {k: round(float(summary.loc[method, k]), 3) for k in ("RMSE", "MAE", "R2", "F1", "Weekly_r", "Off_energy_share_pct", "Energy_abs_error_pct")} | {"name": name}
+    stress = excluded.groupby("Model")[["RMSE", "R2", "F1", "Precision", "Weekly_r", "Energy_abs_error_pct"]].mean().round(3)
+    return {
+        "models": [show("Final model", "Final model"), show("Past-only baseline", "Past-only baseline"), show("Always off", "Always off")],
+        "homes": [{"house": int(h), "final": round(float(final.loc[h, "RMSE"]), 1), "base": round(float(base.loc[h, "RMSE"]), 1)} for h in final["RMSE"].sort_values().index],
+        "energy": [{"state": r["Machine state"], "measured": float(r["Measured kWh"]), "final": float(r["Predicted kWh"]), "base": float(r["Predicted kWh (baseline)"])} for _, r in state.iterrows()],
+        "experiments": [{"name": label, "kind": kind, "why": why, "rmse": float(experiments.loc[key, "RMSE"]), "mae": float(experiments.loc[key, "MAE"]), "r2": float(experiments.loc[key, "R2"])} for key, label, kind, why in EXPERIMENTS],
+        "fine": [{"name": "Past-only with ~8-second statistics", "rmse": float(experiments.loc["E2b_fine_past", "RMSE"])}, {"name": "Look-ahead with ~8-second statistics", "rmse": float(experiments.loc["E2b_fine_look", "RMSE"])}],
+        "stress": {name: stress.loc[name].to_dict() for name in stress.index},
+    }
+
+
+PAGE = r"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Washing-Machine Disaggregation</title>
+<meta name="description" content="Estimating washing-machine power from whole-home smart-meter data, using REFIT.">
+<style>
+:root{color-scheme:light;--page:#f9f9f7;--surface:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#6f6d68;--grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);--final:#2a78d6;--base:#eb6834;--measured:#1baf7a;--neutral:#c3c2b7;--good:#006300}
+@media (prefers-color-scheme:dark){:root{color-scheme:dark;--page:#0d0d0d;--surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#a3a198;--grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--final:#3987e5;--base:#d95926;--measured:#199e70;--neutral:#55544f;--good:#0ca30c}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--page);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:40px 24px 64px}header{margin-bottom:32px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:0 0 12px;font-weight:650;letter-spacing:-.01em}
+.lede{font-size:18px;color:var(--ink2);max-width:760px;margin:0 0 18px}.links{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:15px}a{color:var(--final);text-underline-offset:3px}
+nav{position:sticky;top:0;z-index:5;background:var(--page);border-bottom:1px solid var(--grid);margin:0 -24px 32px;padding:10px 24px;display:flex;gap:18px;overflow-x:auto;font-size:14px;white-space:nowrap}nav a{color:var(--ink2);text-decoration:none}nav a:hover{color:var(--ink)}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}.tile{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px}.tile .k{font-size:14px;color:var(--ink2)}.tile .v{font-size:34px;font-weight:650;line-height:1.2;margin:4px 0}.tile .d{font-size:14px;color:var(--muted)}
+section{margin-top:44px;scroll-margin-top:56px}h2{font-size:24px;margin:0 0 4px;font-weight:650}.take{color:var(--ink2);margin:0 0 16px;max-width:780px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:14px}.card h3{font-size:16px;margin:0 0 2px;font-weight:600}.card .sub{font-size:14px;color:var(--ink2);margin:0 0 12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid2 .card{margin:0}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;counter-reset:s}.step{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;counter-increment:s}.step:before{content:counter(s);display:block;font-weight:650;color:var(--muted);font-size:14px;margin-bottom:4px}.step b{display:block;font-size:15px;font-weight:600;margin-bottom:2px}.step span{font-size:14px;color:var(--ink2);line-height:1.4;display:block}
+svg{display:block;width:100%;height:auto;overflow:visible}svg text{font:12px system-ui,-apple-system,"Segoe UI",sans-serif;fill:var(--ink2)}svg text.val{fill:var(--ink);font-weight:600}svg .gl{stroke:var(--grid);stroke-width:1}svg .ax{stroke:var(--axis);stroke-width:1}svg .hit{fill:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--ink2);margin:0 0 10px}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+figure{margin:0}figure img{width:100%;height:auto;display:block;border-radius:6px}figcaption{font-size:14px;color:var(--ink2);margin-top:8px}
+details{margin-top:12px;font-size:14px;color:var(--ink2)}summary{cursor:pointer;color:var(--ink2)}.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}th,td{padding:6px 10px;border-bottom:1px solid var(--grid);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:var(--ink2);font-weight:600}td.w{white-space:normal;text-align:left;min-width:180px}
+ul.plain{margin:6px 0 0;padding-left:18px}ul.plain li{margin:6px 0}.note{font-size:15px;color:var(--ink2);border-left:3px solid var(--axis);padding:2px 0 2px 12px;margin:14px 0 0}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--page);font-size:13px;line-height:1.4;padding:8px 10px;border-radius:6px;opacity:0;transition:opacity .08s;z-index:9;max-width:260px}
+footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--grid);font-size:14px;color:var(--muted)}
+@media (max-width:760px){.wrap{padding:24px 16px 48px}nav{margin:0 -16px 24px;padding:10px 16px}.tiles{grid-template-columns:repeat(2,1fr)}.tile .v{font-size:28px}.grid2{grid-template-columns:1fr}.flow{grid-template-columns:1fr 1fr}.card{padding:14px}}
+</style></head><body><div class="wrap">
+<header><h1>Estimating washing-machine use from whole-home electricity data</h1>
+<p class="lede">Utilities see a home's total power, but rarely what each appliance uses. This project cleans REFIT smart-meter data and estimates washing-machine power at 1-minute resolution, without any extra meter.</p>
+<div class="links"><a href="__REPO__">GitHub repository</a><a href="__REPO__/blob/main/RESULTS.md">Full results</a><a href="__REPO__/blob/main/Recommendation.md">Recommendation</a><a href="__REPO__/blob/main/DATA.md">Data report</a></div></header>
+<nav aria-label="Sections"><a href="#results">Results</a><a href="#homes">By home</a><a href="#example">Example</a><a href="#energy">Energy</a><a href="#experiments">Experiments</a><a href="#stress">Stress test</a><a href="#data">Data</a><a href="#use">Use and limits</a></nav>
+<div class="tiles" id="tiles"></div>
+<section id="how" style="margin-top:28px"><div class="flow">
+<div class="step"><b>Clean the data</b><span>Fix clocks, duplicates, spikes and gaps</span></div>
+<div class="step"><b>Study the machine</b><span>4,377 operating events across 11 homes</span></div>
+<div class="step"><b>Build features</b><span>Use the aggregate before and after each minute</span></div>
+<div class="step"><b>Train and test</b><span>Hold out each home in turn</span></div>
+<div class="step"><b>Recommend</b><span>A sub-metered weekly-insight pilot</span></div>
+</div></section>
+<section id="results"><h2>The final model has the lowest RMSE and MAE</h2><p class="take">Reading what happens around each minute, not just before it, cut RMSE by 24% against the past-only baseline. It runs in batch, so it suits weekly reporting.</p>
+<div class="card"><h3>RMSE by model</h3><p class="sub">Watts, mean of 11 held-out homes. Lower is better.</p><div id="c-models"></div>
+<details><summary>View as table</summary><div class="tw" id="t-models"></div></details></div></section>
+<section id="homes"><h2>It improved in all 11 homes</h2><p class="take">Every home moved left, though the size of the gain varies. House 5 stays the hardest, and its weekly tracking did not improve.</p>
+<div class="card"><h3>RMSE by held-out home</h3><p class="sub">Watts. Lower is better. Hover a row for values.</p><div class="legend"><span><i style="background:var(--base)"></i>Past-only baseline</span><span><i style="background:var(--final)"></i>Final model</span></div><div id="c-homes"></div>
+<details><summary>View as table</summary><div class="tw" id="t-homes"></div></details></div></section>
+<section id="example"><h2>It reaches more of the heating, but false alarms remain</h2><p class="take">House 16 was held out of training. The final model follows the real 2 kW heating block more closely than the baseline. Similar loads can still trigger it.</p>
+<div class="card"><figure><img src="figures/04_A_actual_vs_predicted_final_model.png" alt="Measured washer power, final model and baseline over one day in House 16, with the aggregate below." loading="lazy"><figcaption>One day in House 16: measured power, the final model and the baseline.</figcaption></figure></div></section>
+<section id="energy"><h2>Less energy lands in the wrong place</h2><p class="take">Predicted energy in OFF minutes nearly halves, and heating rises from a third to nearly three-fifths of its measured energy.</p>
+<div class="card"><h3>Energy by machine state</h3><p class="sub">kWh, all 11 homes together.</p><div class="legend"><span><i style="background:var(--measured)"></i>Measured</span><span><i style="background:var(--final)"></i>Final model</span><span><i style="background:var(--base)"></i>Past-only baseline</span></div><div id="c-energy"></div>
+<details><summary>View as table</summary><div class="tw" id="t-energy"></div></details></div></section>
+<section id="experiments"><h2>Better inputs mattered more than other losses</h2><p class="take">We tested alternatives under one fixed rule, and kept the rejected ones visible. A cycle-context feature set made the largest gain, while changing the loss did not beat it.</p>
+<div class="card"><h3>RMSE by experiment</h3><p class="sub">Watts, 1-minute input, mean of 11 held-out homes. Hover for the decision.</p><div class="legend"><span><i style="background:var(--final)"></i>Selected</span><span><i style="background:var(--measured)"></i>Best past-only</span><span><i style="background:var(--base)"></i>Baseline</span><span><i style="background:var(--neutral)"></i>Rejected</span></div><div id="c-exp"></div>
+<details><summary>View as table</summary><div class="tw" id="t-exp"></div></details>
+<p class="note"><b>Beyond the brief:</b> within-minute statistics from the ~8-second aggregate reached <span id="fine"></span>. They fall outside the 1-minute scope, so they are evidence for finer metering, not the final model.</p></div></section>
+<section id="stress"><h2>It held up on four harder homes</h2><p class="take">Washer-dryer homes were not used to choose the final model. RMSE and R² stayed close to the main result, though a second washing load raised false alarms. This is a stress test, not an independent test.</p>
+<div class="grid2" id="stress-tiles"></div></section>
+<section id="data"><h2>The raw data needed real cleaning</h2><p class="take">The raw clock shifts at UK clock changes, about 1 million timestamps repeat, and sensors report spikes up to 98 kW. Frozen readings made up 30.7% of House 5's published washer energy.</p>
+<div class="card"><figure><img src="figures/01_aggregate_before_after.png" alt="House 1 aggregate power before and after cleaning." loading="lazy"><figcaption>House 1 aggregate: readings above 23 kW are removed, and the recurring load of about 11 kW stays.</figcaption></figure></div></section>
+<section id="use"><h2>Where it fits</h2><div class="grid2">
+<div class="card"><h3>Best suited to</h3><ul class="plain"><li>Weekly laundry-energy trends, in batch</li><li>A pilot of a lower-temperature wash tip</li><li>Reports with no extra hardware</li></ul></div>
+<div class="card"><h3>Needs more work first</h3><ul class="plain"><li>Live alerts, which rely on the weaker past-only model</li><li>Cycle counts, at 1.5 times the true count</li><li>Billing or exact watts for one home</li></ul></div></div>
+<p class="note">Model development used these 11 UK homes, with each home held out in testing, so scores may be somewhat optimistic. Dishwashers and low-heat cycles remain the hardest cases. Validating on new homes is the next step.</p></section>
+<footer>Data: REFIT Electrical Load Measurements, University of Strathclyde (CC BY 4.0). Built from the metric tables in this repository.</footer>
+</div><div id="tip" role="tooltip"></div>
+<script>
+const D=__DATA__;const $=i=>document.getElementById(i);const f=(v,d=1)=>Number(v).toLocaleString("en-GB",{minimumFractionDigits:d,maximumFractionDigits:d});
+const svgNS='http://www.w3.org/2000/svg',tip=$('tip');
+function tipOn(e,h){tip.innerHTML=h;tip.style.opacity=1;tipMove(e)}function tipMove(e){const x=Math.min(e.clientX+14,innerWidth-270);tip.style.left=x+'px';tip.style.top=(e.clientY+14)+'px'}function tipOff(){tip.style.opacity=0}
+function el(p,n,a={},t){const e=document.createElementNS(svgNS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!==undefined)e.textContent=t;p.appendChild(e);return e}
+function svg(host,w,h,label){const s=document.createElementNS(svgNS,'svg');s.setAttribute('viewBox',`0 0 ${w} ${h}`);s.setAttribute('role','img');s.setAttribute('aria-label',label);$(host).appendChild(s);return s}
+function hover(n,h){n.addEventListener('mouseenter',e=>tipOn(e,h));n.addEventListener('mousemove',tipMove);n.addEventListener('mouseleave',tipOff)}
+function bar(s,x,y,w,h,c){const r=Math.min(4,w);return el(s,'path',{d:`M${x},${y}h${w-r}q${r},0 ${r},${r}v${h-2*r}q0,${r} ${-r},${r}h${r-w}z`,fill:c})}
+function ticks(s,x0,scale,max,step,top,bottom){for(let v=0;v<=max;v+=step){const x=x0+scale(v);el(s,'line',{x1:x,x2:x,y1:top,y2:bottom,class:v?'gl':'ax'});el(s,'text',{x,y:bottom+16,'text-anchor':'middle'},f(v,0))}}
+function table(host,head,rows){let h='<table><thead><tr>'+head.map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>';for(const r of rows)h+='<tr>'+r.map(c=>`<td${String(c).length>26?' class="w"':''}>${c}</td>`).join('')+'</tr>';$(host).innerHTML=h+'</tbody></table>'}
+const[F,B,O]=D.models;
+$('tiles').innerHTML=[['RMSE',f(F.RMSE,0)+' W',`Baseline ${f(B.RMSE,0)} W, always off ${f(O.RMSE,0)} W`],['R²',f(F.R2,2),`Baseline ${f(B.R2,2)}`],['Minute-level F1',f(F.F1,2),`Baseline ${f(B.F1,2)}`],['Weekly tracking r',f(F.Weekly_r,2),`Baseline ${f(B.Weekly_r,2)}`]].map(t=>`<div class="tile"><div class="k">${t[0]}</div><div class="v">${t[1]}</div><div class="d">${t[2]}</div></div>`).join('');
+(function(){const w=900,L=170,R=70,rows=D.models,bh=24,gap=16,h=rows.length*(bh+gap)+28,max=175,sc=v=>v/max*(w-L-R),s=svg('c-models',w,h,'RMSE by model');ticks(s,L,sc,max,25,0,h-24);const col={'Final model':'var(--final)','Past-only baseline':'var(--base)','Always off':'var(--neutral)'};rows.forEach((m,i)=>{const y=i*(bh+gap)+6;el(s,'text',{x:L-10,y:y+16,'text-anchor':'end'},m.name);bar(s,L,y,sc(m.RMSE),bh,col[m.name]);el(s,'text',{x:L+sc(m.RMSE)+8,y:y+16,class:'val'},f(m.RMSE,1)+' W');hover(el(s,'rect',{x:0,y:y-4,width:w,height:bh+8,class:'hit'}),`<b>${m.name}</b><br>RMSE ${f(m.RMSE,1)} W<br>MAE ${f(m.MAE,1)} W<br>R² ${f(m.R2,2)}`)});table('t-models',['Model','RMSE (W)','MAE (W)','R²','F1','Weekly r','Energy error','Energy in OFF minutes'],rows.map(m=>[m.name,f(m.RMSE),f(m.MAE),f(m.R2,2),f(m.F1,2),m.Weekly_r?f(m.Weekly_r,2):'n/a',f(m.Energy_abs_error_pct)+'%',f(m.Off_energy_share_pct)+'%']))})();
+(function(){const w=900,L=80,R=40,rows=[...D.homes].sort((a,b)=>b.final-a.final),rh=30,h=rows.length*rh+30,max=200,sc=v=>v/max*(w-L-R),s=svg('c-homes',w,h,'RMSE by home, baseline and final model');ticks(s,L,sc,max,50,0,h-24);rows.forEach((r,i)=>{const y=i*rh+18;el(s,'text',{x:L-12,y:y+4,'text-anchor':'end'},'House '+r.house);el(s,'line',{x1:L+sc(r.final),x2:L+sc(r.base),y1:y,y2:y,stroke:'var(--axis)','stroke-width':2});el(s,'circle',{cx:L+sc(r.base),cy:y,r:6,fill:'var(--base)',stroke:'var(--surface)','stroke-width':2});el(s,'circle',{cx:L+sc(r.final),cy:y,r:6,fill:'var(--final)',stroke:'var(--surface)','stroke-width':2});hover(el(s,'rect',{x:0,y:y-rh/2,width:w,height:rh,class:'hit'}),`<b>House ${r.house}</b><br>Baseline ${f(r.base)} W<br>Final ${f(r.final)} W`)});table('t-homes',['House','Past-only baseline (W)','Final model (W)'],rows.map(r=>[r.house,f(r.base),f(r.final)]))})();
+(function(){const w=900,L=150,R=70,rows=D.energy,bh=14,rg=20,h=rows.length*(3*(bh+2)+rg)+28,max=1800,sc=v=>v/max*(w-L-R),s=svg('c-energy',w,h,'Energy by machine state');ticks(s,L,sc,max,300,0,h-24);rows.forEach((r,i)=>{const y0=i*(3*(bh+2)+rg)+8;el(s,'text',{x:L-10,y:y0+27,'text-anchor':'end'},r.state.replace(', 1000+ W','').replace(', 20-200 W','').replace(', 20 W or less','').replace('200-1000 W','Medium power'));[['measured','var(--measured)','Measured'],['final','var(--final)','Final model'],['base','var(--base)','Baseline']].forEach(([k,c,n],j)=>{const y=y0+j*(bh+2),b=sc(r[k]);bar(s,L,y,Math.max(b,1.5),bh,c);el(s,'text',{x:L+b+6,y:y+11,class:k=='measured'?'val':''},f(r[k],0));hover(el(s,'rect',{x:0,y:y-1,width:w,height:bh+2,class:'hit'}),`<b>${r.state}</b><br>${n}: ${f(r[k])} kWh`)})});table('t-energy',['Machine state','Measured (kWh)','Final model (kWh)','Past-only baseline (kWh)'],rows.map(r=>[r.state,f(r.measured),f(r.final),f(r.base)]))})();
+(function(){const w=900,L=250,R=70,rows=[...D.experiments].sort((a,b)=>a.rmse-b.rmse),bh=18,gap=8,h=rows.length*(bh+gap)+28,max=175,sc=v=>v/max*(w-L-R),s=svg('c-exp',w,h,'RMSE by experiment'),col={selected:'var(--final)',live:'var(--measured)',baseline:'var(--base)',rejected:'var(--neutral)'};ticks(s,L,sc,max,25,0,h-24);rows.forEach((r,i)=>{const y=i*(bh+gap)+4;el(s,'text',{x:L-10,y:y+13,'text-anchor':'end'},r.name);bar(s,L,y,sc(r.rmse),bh,col[r.kind]);el(s,'text',{x:L+sc(r.rmse)+6,y:y+13,class:r.kind=='selected'?'val':''},f(r.rmse,1));hover(el(s,'rect',{x:0,y:y-3,width:w,height:bh+6,class:'hit'}),`<b>${r.name}</b><br>RMSE ${f(r.rmse)} W, MAE ${f(r.mae)} W<br>${r.why}`)});table('t-exp',['Experiment','RMSE (W)','MAE (W)','R²','Decision'],rows.map(r=>[r.name,f(r.rmse,2),f(r.mae,2),f(r.r2,3),r.why]));$('fine').textContent=`RMSE ${f(D.fine[0].rmse,0)} W past-only and ${f(D.fine[1].rmse,0)} W with look-ahead`})();
+(function(){const S=D.stress,a=S['Final model'],b=S['Past-only baseline'];const t=(n,m)=>`<div class="card"><h3>${n}</h3><p class="sub">Mean of Houses 1, 8, 9 and 18</p><table><tbody><tr><td>RMSE</td><td>${f(m.RMSE,1)} W</td></tr><tr><td>R²</td><td>${f(m.R2,2)}</td></tr><tr><td>F1</td><td>${f(m.F1,2)}</td></tr><tr><td>Precision</td><td>${f(m.Precision,2)}</td></tr><tr><td>Weekly r</td><td>${f(m.Weekly_r,2)}</td></tr><tr><td>Energy error</td><td>${f(m.Energy_abs_error_pct,0)}%</td></tr></tbody></table></div>`;$('stress-tiles').innerHTML=t('Final model',a)+t('Past-only baseline',b)})();
+</script></body></html>
+"""
+
+
+def main() -> None:
+    DOCS.mkdir(exist_ok=True)
+    (DOCS / "figures").mkdir(exist_ok=True)
+    for name in FIGURES:
+        shutil.copy2(cfg.FIGURES / name, DOCS / "figures" / name)
+    (DOCS / ".nojekyll").write_text("", encoding="utf-8")
+    html = PAGE.replace("__DATA__", json.dumps(payload())).replace("__REPO__", REPO)
+    (DOCS / "index.html").write_text(html, encoding="utf-8", newline="\n")
+    print(f"Built {DOCS / 'index.html'}")
+
+
+if __name__ == "__main__":
+    main()

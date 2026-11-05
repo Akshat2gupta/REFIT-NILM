@@ -17,6 +17,8 @@ flowchart LR
     G --> H[Recommendation<br/>Weekly insight pilot]
 ```
 
+**[View the project dashboard](https://akshat2gupta.github.io/REFIT-NILM/)** for the main results at a glance.
+
 | Document | Contents |
 |---|---|
 | [`DATA.md`](DATA.md) | Data coverage, quality findings and cleaning decisions |
@@ -96,6 +98,7 @@ Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrup
 | Final model | `scripts/run_final_model.py` | `src/lookahead.py` | `loho__lookahead_ctx__*` predictions |
 | Final evaluation | `scripts/evaluate_final_model.py` | `src/evaluation.py` | `04_*` figures, `final_model_*` metrics |
 | Stress test | `scripts/evaluate_excluded_homes.py` | `src/lookahead.py` | `final_model_excluded_homes.csv` |
+| Dashboard | `scripts/build_dashboard.py` | Saved metric tables | `docs/index.html` |
 
 ## Methodology
 
