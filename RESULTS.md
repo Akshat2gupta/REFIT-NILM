@@ -1,6 +1,10 @@
 # Results
 
-**Contents:** [Summary](#summary) · [Homes and periods](#1-homes-and-periods) · [Washing-machine use](#2-washing-machine-use) · [Model and validation](#3-model-and-validation) · [Results](#4-results) · [What we tried](#what-we-tried-and-why) · [Failure cases](#5-failure-cases) · [Interpretation](#6-interpretation) · [What could be wrong](#7-what-could-be-wrong) · [References](#8-references) · [Full details](#full-details)
+| Overview | Analysis | Model | Assessment |
+|---|---|---|---|
+| [Summary](#summary) | [Homes and periods](#1-homes-and-periods) | [Model and validation](#3-model-and-validation) | [Failure cases](#5-failure-cases) |
+| [References](#8-references) | [Washing-machine use](#2-washing-machine-use) | [Results](#4-results) | [Interpretation](#6-interpretation) |
+| [Full details](#full-details) | | [What we tried](#what-we-tried-and-why) | [What could be wrong](#7-what-could-be-wrong) |
 
 ## Summary
 
