@@ -60,10 +60,13 @@ def payload() -> dict:
 PAGE = r"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Washing-Machine Disaggregation</title>
+<script>try{const t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <meta name="description" content="Estimating washing-machine power from whole-home smart-meter data, using REFIT.">
 <style>
 :root{color-scheme:light;--page:#f9f9f7;--surface:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#6f6d68;--grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);--final:#2a78d6;--base:#eb6834;--measured:#1baf7a;--neutral:#c3c2b7;--good:#006300}
-@media (prefers-color-scheme:dark){:root{color-scheme:dark;--page:#0d0d0d;--surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#a3a198;--grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--final:#3987e5;--base:#d95926;--measured:#199e70;--neutral:#55544f;--good:#0ca30c}}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){color-scheme:dark;--page:#0d0d0d;--surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#a3a198;--grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--final:#3987e5;--base:#d95926;--measured:#199e70;--neutral:#55544f;--good:#0ca30c}}
+:root[data-theme="dark"]{color-scheme:dark;--page:#0d0d0d;--surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#a3a198;--grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--final:#3987e5;--base:#d95926;--measured:#199e70;--neutral:#55544f;--good:#0ca30c}
+.top{display:flex;justify-content:flex-end;margin-bottom:12px}#theme{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--axis);border-radius:8px;padding:6px 12px;cursor:pointer}#theme:hover{background:var(--grid)}#theme:focus-visible{outline:2px solid var(--final);outline-offset:2px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--page);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
 .wrap{max-width:1040px;margin:0 auto;padding:40px 24px 64px}header{margin-bottom:32px}
 h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:0 0 12px;font-weight:650;letter-spacing:-.01em}
@@ -83,6 +86,7 @@ ul.plain{margin:6px 0 0;padding-left:18px}ul.plain li{margin:6px 0}.note{font-si
 footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--grid);font-size:14px;color:var(--muted)}
 @media (max-width:760px){.wrap{padding:24px 16px 48px}nav{margin:0 -16px 24px;padding:10px 16px}.tiles{grid-template-columns:repeat(2,1fr)}.tile .v{font-size:28px}.grid2{grid-template-columns:1fr}.flow{grid-template-columns:1fr 1fr}.card{padding:14px}}
 </style></head><body><div class="wrap">
+<div class="top"><button id="theme" type="button"></button></div>
 <header><h1>Estimating washing-machine use from whole-home electricity data</h1>
 <p class="lede">Utilities see a home's total power, but rarely what each appliance uses. This project cleans REFIT smart-meter data and estimates washing-machine power at 1-minute resolution, without any extra meter.</p>
 <div class="links"><a href="__REPO__">GitHub repository</a><a href="__REPO__/blob/main/RESULTS.md">Full results</a><a href="__REPO__/blob/main/Recommendation.md">Recommendation</a><a href="__REPO__/blob/main/DATA.md">Data report</a></div></header>
@@ -121,7 +125,8 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--grid);font-si
 <footer>Data: REFIT Electrical Load Measurements, University of Strathclyde (CC BY 4.0). Built from the metric tables in this repository.</footer>
 </div><div id="tip" role="tooltip"></div>
 <script>
-const D=__DATA__;const $=i=>document.getElementById(i);const f=(v,d=1)=>Number(v).toLocaleString("en-GB",{minimumFractionDigits:d,maximumFractionDigits:d});
+const D=__DATA__;const $=i=>document.getElementById(i);
+(function(){const b=$('theme'),root=document.documentElement,dark=()=>(root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'))==='dark',show=()=>{b.textContent=dark()?'Light mode':'Dark mode'};show();b.addEventListener('click',()=>{const t=dark()?'light':'dark';root.setAttribute('data-theme',t);try{localStorage.setItem('theme',t)}catch(e){}show()})})();const f=(v,d=1)=>Number(v).toLocaleString("en-GB",{minimumFractionDigits:d,maximumFractionDigits:d});
 const svgNS='http://www.w3.org/2000/svg',tip=$('tip');
 function tipOn(e,h){tip.innerHTML=h;tip.style.opacity=1;tipMove(e)}function tipMove(e){const x=Math.min(e.clientX+14,innerWidth-270);tip.style.left=x+'px';tip.style.top=(e.clientY+14)+'px'}function tipOff(){tip.style.opacity=0}
 function el(p,n,a={},t){const e=document.createElementNS(svgNS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!==undefined)e.textContent=t;p.appendChild(e);return e}
