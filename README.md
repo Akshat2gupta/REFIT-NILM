@@ -112,7 +112,7 @@ Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrup
 
 **Design.** Leave one house out is primary, because a utility has no appliance data for a customer's home. A temporal split on the baseline is a secondary check. ON/OFF thresholds come from two held-back training homes.
 
-**Leakage.** Whole homes are held out, no feature uses the target, and moving the cycle-context features by 7 days removes their gain. Future aggregate readings are not target leakage, because they never contain the washer's own meter. They do limit the model to batch use.
+**Leakage.** Whole homes are held out, no feature uses the target, and moving the cycle-context features by 7 days removes their gain. Future aggregate readings do not use the washing-machine sub-meter, but the aggregate includes the machine's own power, so these readings carry information about the target. This is valid for batch estimation, where those readings already exist, but it rules out live prediction. Performance on new homes is tested by holding out each home.
 
 **Baselines.** Always off, average home, a threshold rule, and past-only Random Forest and gradient boosting models.
 

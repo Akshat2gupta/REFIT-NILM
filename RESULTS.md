@@ -130,7 +130,7 @@ flowchart LR
     E --> F[Repeat for all 11<br/>and average]
 ```
 
-**Why reading the future is allowed here, and why it is not leakage.** The brief asks for an estimate from the aggregate and does not require live prediction. Weekly reporting runs after the data is collected, so later readings are available. Those readings come from the home's total only and never from the washer's own meter.
+**Why reading the future is valid here.** The brief asks for an estimate from the aggregate and does not require live prediction. Weekly reporting runs after the data is collected, so later readings already exist. These readings do not use the washing-machine sub-meter, but the aggregate includes the machine's own power, so they carry information about the target. This is valid for batch estimation, but it rules out live prediction. Performance on new homes is tested by holding out each home.
 
 **How leakage is prevented:**
 
