@@ -144,6 +144,10 @@ Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrup
 | No hyperparameter tuning | Reduces overfitting to test homes | Models may not be at their best |
 | Sampled training rows for the final model | Fits in laptop memory | On the baseline features, up to about 1 W RMSE difference by home |
 
+## AI tools used
+
+Claude Code (Anthropic) assisted with code, analysis and documentation. I set the direction, made the final modelling decisions, and reviewed the results.
+
 ## Limitations and future improvements
 
 **Limitations**
