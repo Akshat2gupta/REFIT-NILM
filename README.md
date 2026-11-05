@@ -100,13 +100,13 @@ Then run the notebooks in order: 01, 02, 03. Training scripts resume if interrup
 
 - **Clock:** convert to true UTC, because the raw clock shifts at UK clock changes.
 - **Duplicates and overlap:** keep Part 1 where files overlap, and the last non-null reading per second.
-- **Impossible values:** aggregate above 23 kW or exactly 0 W, and appliances above 4 kW, become missing.
-- **Resampling:** 1-minute mean, because mean power preserves energy.
+- **Invalid readings:** aggregate readings above 23 kW or at 0 W and below, and appliance readings above 4 kW, are masked as missing. A home with always-on appliances should rarely read 0 W in total. Appliance zeros stay as measured.
+- **Resampling:** calculate mean power per minute, giving a consistent 1-minute series that preserves energy over complete, evenly sampled intervals.
 - **Gaps:** interpolate up to 5 minutes and flag them. Leave longer outages empty and flag them.
 
-**Washing-machine cycles.** The machine is active above 20 W. Pauses up to 15 minutes are joined, and an event must last 10 minutes and reach 200 W.
+**Washing-machine cycles.** The machine is active above 20 W. Pauses up to 15 minutes are joined, and an event must last 10 minutes and reach 200 W. These thresholds identify candidate operating events; they do not confirm that every detected event is a complete wash cycle.
 
-**Final model.** HistGradientBoosting regression with fixed settings, on 86 features from the aggregate only: 34 past features, future readings up to 60 minutes, and cycle context, such as the surrounding heating block and motor-like variation.
+**Final model.** HistGradientBoosting regression with fixed settings, using 86 aggregate-derived features: 34 past-only features, future aggregate readings up to 60 minutes, and cycle-context features such as heating-block position and motor-like variation, some of which can look further ahead. The model estimates washing-machine power at 1-minute resolution and is intended for batch estimation, not live prediction.
 
 ## Validation and metrics
 
