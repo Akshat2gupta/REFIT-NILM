@@ -1,5 +1,7 @@
 # Results
 
+**Contents:** [Summary](#summary) · [Homes and periods](#1-homes-and-periods) · [Washing-machine use](#2-washing-machine-use) · [Model and validation](#3-model-and-validation) · [Results](#4-results) · [What we tried](#what-we-tried-and-why) · [Failure cases](#5-failure-cases) · [Interpretation](#6-interpretation) · [What could be wrong](#7-what-could-be-wrong) · [References](#8-references) · [Full details](#full-details)
+
 ## Summary
 
 We estimated a washing machine's power from a home's total electricity use at 1-minute resolution, testing each of 11 homes with a model trained on the other ten. **The final model has real skill and suits batch analysis such as weekly reporting. It is not accurate enough for exact minute-level power, cycle counts or bills, and it cannot run live because it reads future minutes.**
